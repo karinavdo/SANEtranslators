@@ -1,5 +1,6 @@
 # Project specifics
 project_admin
+kb_results
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

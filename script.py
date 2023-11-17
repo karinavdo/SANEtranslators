@@ -5,33 +5,24 @@ import re
 import csv
 import collections
 import shutil
+import argparse
 
-INPUT_PATH = './input_test'
-OUTPUT_PATH = './output_test'
+INPUT_PATH = './test_dirs/input_test'
+OUTPUT_PATH = './test_dirs/output_test'
+TMP_PATH = './test_dirs/tmp_test'
 
-paths = { 
-   'input_path': INPUT_PATH,
-   'output_path': OUTPUT_PATH
-   }
+parser = argparse.ArgumentParser()
+parser.add_argument( '-i', '--input_path', help='input folder', default=INPUT_PATH )
+parser.add_argument( '-o', '--output_path', help='output folder', default=OUTPUT_PATH )
+parser.add_argument( '-t', '--temp', help='temp folder', default=TMP_PATH )
 
-def set_paths( cmd_arg, paths ):
-    if( len( cmd_arg ) == 2 ):
-       if( cmd_arg[0] == '-i' ):
-        paths['input_path'] = cmd_arg[1]
-       if( cmd_arg[0] == '-o' ):
-        paths['output_path'] = cmd_arg[1]
+args = parser.parse_args()
 
-# As per spec, so I'm assuming no need for argparse
-# or other over engineered thingies. 
-args = sys.argv[1:]
-for arg1, arg2 in zip( args[::2], args[1::2]):
-   set_paths( (arg1, arg2), paths)
-
-isbns_filepath = f'{paths["input_path"]}/isbns.csv'
+isbns_filepath = f'{args.input_path}/isbns.csv'
 if( os.path.isfile( isbns_filepath ) ):
-    shutil.copyfile( isbns_filepath, f'{paths["output_path"]}/isbns.csv' )
+    shutil.copyfile( isbns_filepath, f'{args.output_path}/isbns.csv' )
         
-filepaths = glob( f'{paths["input_path"]}/*.txt' )
+filepaths = glob( f'{args.input_path}/*.txt' )
 
 frequency_lists={}
 for filepath in filepaths:
@@ -46,7 +37,7 @@ for filepath in filepaths:
 for file_name, frequencies in frequency_lists.items():
     file_name = file_name.split( '/' )[-1]
     file_name = file_name.replace( '.txt', '.csv' )
-    file_path = f'{paths["output_path"]}/{file_name}'
+    file_path = f'{args.output_path}/{file_name}'
     with open( file_path, 'w', newline='', encoding='utf8' ) as csv_file:
         writer=csv.writer( csv_file, delimiter=',', quoting=csv.QUOTE_NONNUMERIC )
         writer.writerows( frequencies )
